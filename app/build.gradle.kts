@@ -2,6 +2,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.dagger)
+    id("kotlin-kapt")
 }
 
 android {
@@ -56,4 +59,14 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.database)
+    implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.storage.ktx)
+
+    implementation(libs.dagger.hilt)
+    kapt(libs.dagger.kapt)
 }

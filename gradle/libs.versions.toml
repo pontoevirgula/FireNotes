@@ -7,7 +7,13 @@ junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.9.1"
 activityCompose = "1.10.1"
-composeBom = "2024.09.00"
+composeBom = "2025.07.00"
+firebaseStorage = "22.0.0"
+firebaseStorageKtx = "21.0.2"
+firebaseFirestoreKtx = "25.1.4"
+firebase="34.0.0"
+navigation = "2.9.3"
+hilt = "2.57"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -25,8 +31,34 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 
+
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics"}
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth"}
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase" }
+firebase-database = { group = "com.google.firebase", name = "firebase-database" }
+firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestoreKtx" }
+firebase-storage = { group = "com.google.firebase", name = "firebase-storage", version.ref = "firebaseStorage" }
+firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx", version.ref = "firebaseStorageKtx" }
+
+dagger-hilt = { module="com.google.dagger:hilt-android", version.ref= "hilt" }
+dagger-kapt = { module="com.google.dagger:hilt-android-compiler", version.ref= "hilt" }
+hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose",version= "2.57" }
+
+navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigation" }
+navigation-components = { module = "androidx.navigation:navigation-compose-ktx", version.ref = "navigation" }
+navigation-components-ui = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigation" }
+
+kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlin" }
+
+coil-compose = { module = "io.coil-kt:coil-compose", version = "2.7.0" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+google-services = { id = "com.google.gms.google-services", version = "4.4.3" }
+kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+dagger = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 
