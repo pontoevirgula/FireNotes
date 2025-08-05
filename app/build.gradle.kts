@@ -43,6 +43,15 @@ android {
 }
 
 dependencies {
+    implementation(project(":auth:ui"))
+    implementation(project(":auth:domain"))
+    implementation(project(":auth:data"))
+    implementation(project(":notes:ui"))
+    implementation(project(":notes:domain"))
+    implementation(project(":notes:data"))
+    implementation(project(":shared-notes:ui"))
+    implementation(project(":shared-notes:domain"))
+    implementation(project(":shared-notes:data"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -61,12 +70,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.analytics)
-    implementation(libs.firebase.auth)
-    implementation(libs.firebase.database)
-    implementation(libs.firebase.firestore.ktx)
-    implementation(libs.firebase.storage.ktx)
-
     implementation(libs.dagger.hilt)
     kapt(libs.dagger.kapt)
 }

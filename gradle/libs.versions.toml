@@ -14,6 +14,8 @@ firebaseFirestoreKtx = "25.1.4"
 firebase="34.0.0"
 navigation = "2.9.3"
 hilt = "2.57"
+appcompat = "1.7.1"
+material = "1.12.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -51,6 +53,8 @@ navigation-components-ui = { module = "androidx.navigation:navigation-ui-ktx", v
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlin" }
 
 coil-compose = { module = "io.coil-kt:coil-compose", version = "2.7.0" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
