@@ -25,7 +25,13 @@ object AuthNavGraph : BaseNavGraph {
     ) {
         navGraphBuilder.navigation<Dest.Root>(startDestination = Dest.Auth){
             composable<Dest.Auth>{
-                AuthScreen(modifier = modifier)
+                AuthScreen(modifier = modifier){
+                    navHostController.navigate(NotesNavGraph.Dest.Notes){
+                        popUpTo(0){
+                            inclusive = true
+                        }
+                    }
+                }
             }
         }
     }
