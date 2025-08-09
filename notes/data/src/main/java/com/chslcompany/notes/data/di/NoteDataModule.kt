@@ -8,23 +8,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import jakarta.inject.Singleton
-
-
 @InstallIn(SingletonComponent::class)
 @Module
 object NoteDataModule {
-
-
-    @Provides
-    @Singleton
-    fun providesFirebaseFirestore() : FirebaseFirestore =
-        FirebaseFirestore.getInstance()
-
-    @Provides
-    @Singleton
-    fun providesFirebaseStorage() : FirebaseStorage =
-        FirebaseStorage.getInstance()
 
     @Provides
     fun providesNotesRepoImpl(

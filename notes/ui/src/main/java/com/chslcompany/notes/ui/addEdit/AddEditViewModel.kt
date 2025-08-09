@@ -7,16 +7,16 @@ import com.chslcompany.auth.domain.useCase.GetCurrentUserUseCase
 import com.chslcompany.notes.domain.model.Note
 import com.chslcompany.notes.domain.useCase.CreateNoteUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
-import javax.inject.Inject
+
 
 @HiltViewModel
 class AddEditViewModel @Inject constructor(
@@ -71,18 +71,20 @@ class AddEditViewModel @Inject constructor(
             title = title.value,
             content = content.value,
             imageUrl = imageUrl.value,
-            shared = false,
+            shared = shared.value,
         )
+        
         createNoteUseCase(_imageUrl.value, note)
-            .onStart{ _uiState.update { AddEditUiState(isLoading = true) } }
+            .onStart{ 
+                _uiState.update { AddEditUiState(isLoading = true) }
+            }
             .onEach { result ->
                 result.onSuccess {
                     _uiState.update { AddEditUiState(isLoading = false, isPopBackStack = true) }
                 }.onFailure { error ->
                     _uiState.update { AddEditUiState(isLoading = false) }
                 }
-            }.onCompletion {
-                _uiState.update { AddEditUiState(isLoading = false) }
+
             }.launchIn(viewModelScope)
     }
 

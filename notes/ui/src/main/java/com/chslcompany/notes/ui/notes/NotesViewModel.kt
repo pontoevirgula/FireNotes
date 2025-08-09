@@ -25,29 +25,41 @@ class NotesViewModel @Inject constructor(
 
     private val _user = MutableStateFlow<User?>(value = null)
 
-    init {
-        viewModelScope.launch {
-            _user.update { getCurrentUserUseCase() }
-        }
-        getNotes()
-    }
-
     private val _notes = MutableStateFlow<List<Note>>(emptyList())
     val notes = _notes.asStateFlow()
 
-    fun getNotes() {
-        getAllNotesUseCase(_user.value?.email.orEmpty())
-            .onEach { result ->
-                _notes.update { result }
-            }.launchIn(viewModelScope)
+    init {
+        viewModelScope.launch {
+            val user = getCurrentUserUseCase()
+            _user.update { user }
+            // Get notes after user is loaded
+            if (user != null) {
+                getNotes()
+            }
+        }
     }
 
-    fun deleteNote(id : String){
-        deleteNoteUseCase(id).onEach { result ->
-            result.onSuccess {}
-                .onFailure {  }
-        }.launchIn(viewModelScope)
+    fun getNotes() {
+        val userEmail = _user.value?.email.orEmpty()
+        if (userEmail.isNotEmpty()) {
+            getAllNotesUseCase(userEmail)
+                .onEach { result ->
+                    _notes.update { result }
+                }.launchIn(viewModelScope)
+        } else {
+            _notes.update { emptyList() }
+        }
+    }
 
+    fun deleteNote(id: String) {
+        deleteNoteUseCase(id).onEach { result ->
+            result.onSuccess {
+                // Refresh notes after successful deletion
+                getNotes()
+            }.onFailure { 
+                // Handle error if needed
+            }
+        }.launchIn(viewModelScope)
     }
 
 }

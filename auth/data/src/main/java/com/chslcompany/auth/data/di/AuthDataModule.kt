@@ -7,16 +7,10 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
 object AuthDataModule {
-    @Provides
-    @Singleton
-    fun providesFirebaseAuth(): FirebaseAuth {
-        return FirebaseAuth.getInstance()
-    }
 
     @Provides
     fun providesAuthRepository(auth : FirebaseAuth) : AuthRepository {

@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
-import javax.inject.Inject
+import jakarta.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(

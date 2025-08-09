@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -96,38 +98,53 @@ fun AddEditScreenContent(
     addImage : () -> Unit,
     createNote: () -> Unit
 ) {
-
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
             TopAppBar(title = { Text("Adicionar/Editar") })
-        }, floatingActionButton = {
-            FloatingActionButton(onClick = createNote){
-               Icon(imageVector = Icons.Default.Check, contentDescription = null)
+        }, 
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = createNote,
+                modifier = Modifier
+                    .navigationBarsPadding()
+                    .imePadding()
+            ){
+               Icon(imageVector = Icons.Default.Check, contentDescription = "Salvar nota")
             }
-        }) { innerPadding ->
+        }
+    ) { innerPadding ->
 
-        Column(Modifier
-            .padding(innerPadding)
-            .padding(horizontal = 12.dp, vertical = 8.dp)
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .padding(horizontal = 12.dp, vertical = 8.dp)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .imePadding()
+                .navigationBarsPadding()
         ) {
             Text("Título")
             Spacer(modifier = Modifier.height(height = 8.dp))
             TextField(
-                value = title, onValueChange = onTitleChange,
+                value = title, 
+                onValueChange = onTitleChange,
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("Digite o título de sua tarefa") })
+                placeholder = { Text("Digite o título de sua tarefa") },
+                singleLine = true
+            )
 
             Spacer(modifier = Modifier.height(height = 12.dp))
 
             Text("Conteúdo")
             Spacer(modifier = Modifier.height(height = 8.dp))
             TextField(
-                value = content, onValueChange = onContentChange,
+                value = content, 
+                onValueChange = onContentChange,
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("Digite o conteúdo de sua tarefa") }
+                placeholder = { Text("Digite o conteúdo de sua tarefa") },
+                minLines = 3,
+                maxLines = 8
             )
 
             Spacer(modifier = Modifier.height(height = 12.dp))
@@ -165,10 +182,7 @@ fun AddEditScreenContent(
                     modifier = Modifier.fillMaxWidth(),
                     contentScale = ContentScale.Inside
                 )
+            }
         }
-
-    }
-
-
     }
 }

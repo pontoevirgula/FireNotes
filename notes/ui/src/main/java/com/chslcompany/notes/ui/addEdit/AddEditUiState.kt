@@ -1,6 +1,6 @@
 package com.chslcompany.notes.ui.addEdit
 
 data class AddEditUiState(
-    val isLoading: Boolean = false,
-    val isPopBackStack: Boolean = false,
+    var isLoading: Boolean = false,
+    var isPopBackStack: Boolean = false,
 )

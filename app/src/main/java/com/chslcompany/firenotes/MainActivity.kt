@@ -19,7 +19,7 @@ import com.chslcompany.firenotes.navigation.NotesNavGraph
 import com.chslcompany.firenotes.ui.theme.FireNotesTheme
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
+import jakarta.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
