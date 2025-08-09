@@ -51,7 +51,7 @@ fun NotesScreen(
         modifier = modifier,
         notes = notes,
         onDelete = viewModel::deleteNote,
-        goToAddEditNoteScreen = { goToAddEditNoteScreen(null) },
+        goToAddEditNoteScreen = goToAddEditNoteScreen,
     )
 }
 
