@@ -5,6 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import androidx.navigation.toRoute
 import com.chslcompany.notes.ui.addEdit.AddEditScreen
 import com.chslcompany.notes.ui.notes.NotesScreen
 import kotlinx.serialization.Serializable
@@ -35,9 +36,14 @@ object NotesNavGraph  : BaseNavGraph {
             }
 
             composable<Dest.AddEdit> {
-                AddEditScreen(modifier, popBackStack = {
-                    navHostController.popBackStack()
-                })
+                val id = it.toRoute<Dest.AddEdit>().id
+                AddEditScreen(
+                    modifier = modifier,
+                    popBackStack = {
+                        navHostController.popBackStack()
+                    },
+                    id = id
+                )
             }
         }
     }

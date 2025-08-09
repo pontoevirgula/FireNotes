@@ -4,6 +4,8 @@ import com.chslcompany.notes.domain.repository.NotesRepository
 import com.chslcompany.notes.domain.useCase.CreateNoteUseCase
 import com.chslcompany.notes.domain.useCase.DeleteNoteUseCase
 import com.chslcompany.notes.domain.useCase.GetAllNotesUseCase
+import com.chslcompany.notes.domain.useCase.GetNoteUseCase
+import com.chslcompany.notes.domain.useCase.GetUpdateNoteUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,6 +28,16 @@ object NotesDomainModule {
     @Provides
     fun providesGetAllNotesUseCase(notesRepository: NotesRepository) : GetAllNotesUseCase {
         return GetAllNotesUseCase(notesRepository)
+    }
+
+    @Provides
+    fun providesGetNoteUseCase(notesRepository: NotesRepository) : GetNoteUseCase {
+        return GetNoteUseCase(notesRepository)
+    }
+
+    @Provides
+    fun providesGetUpdateNoteUseCase(notesRepository: NotesRepository) : GetUpdateNoteUseCase {
+        return GetUpdateNoteUseCase(notesRepository)
     }
 
 

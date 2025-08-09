@@ -1,6 +1,8 @@
 package com.chslcompany.notes.ui.notes
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,12 +11,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,6 +35,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.chslcompany.notes.domain.model.Note
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 
 @Composable
 fun NotesScreen(
@@ -42,13 +47,11 @@ fun NotesScreen(
 
     val notes by viewModel.notes.collectAsStateWithLifecycle()
 
-
-
     NotesScreenContent(
         modifier = modifier,
         notes = notes,
         onDelete = viewModel::deleteNote,
-        onAddNote = { goToAddEditNoteScreen(null) }
+        goToAddEditNoteScreen = { goToAddEditNoteScreen(null) },
     )
 }
 
@@ -58,13 +61,15 @@ fun NotesScreenContent(
     modifier: Modifier = Modifier, 
     notes: List<Note>, 
     onDelete: (String) -> Unit,
-    onAddNote: () -> Unit
+    goToAddEditNoteScreen: (String?) -> Unit
 ){
     Scaffold(
         modifier = modifier.fillMaxSize(),
         floatingActionButton = {
             FloatingActionButton(
-                onClick = onAddNote
+                onClick = {
+                    goToAddEditNoteScreen(null)
+                }
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -74,29 +79,30 @@ fun NotesScreenContent(
         }
     ) {
         if (notes.isEmpty()) {
-            // Show empty state
             Column(
                 modifier = Modifier
                     .padding(it)
                     .fillMaxSize()
                     .padding(16.dp),
-                verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
-                horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Nenhuma nota encontrada",
+                    text = "Nenhuma anotação encontrada",
                     style = MaterialTheme.typography.headlineMedium,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Adicione sua primeira nota!",
+                    text = "Adicione sua primeira anotação",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                androidx.compose.material3.Button(
-                    onClick = onAddNote
+                Button(
+                    onClick = {
+                        goToAddEditNoteScreen(null)
+                    }
                 ) {
                     Text("Adicionar Nota")
                 }
@@ -109,17 +115,21 @@ fun NotesScreenContent(
             ) {
                 items (
                     notes.size,
-                    key = { index -> notes.get(index).id },
-                    contentType = { index -> notes.get(index).id }
+                    key = { index -> notes[index].id },
+                    contentType = { index -> notes[index].id }
                 ) { index ->
                     Row(
                         modifier = Modifier
+                            .clickable{
+                                goToAddEditNoteScreen(notes[index].id)
+                            }
                             .padding(horizontal = 12.dp, vertical = 8.dp)
                             .fillMaxWidth()
                             .background(
                                 color = if(notes.get(index).shared) Color.Green else Color.LightGray,
                                 shape = RoundedCornerShape(12.dp)
                             )
+                            .padding(12.dp)
                             .clip(RoundedCornerShape(12.dp))
                     ) {
                         AsyncImage(
@@ -129,7 +139,7 @@ fun NotesScreenContent(
                                 .background(color = Color.White, shape = CircleShape)
                                 .clip(CircleShape)
                        )
-
+                       Spacer(Modifier.width(8.dp))
                         Column(modifier = Modifier.weight(1f)){
                             Text(notes.get(index).title, style = MaterialTheme.typography.titleLarge)
                             Spacer(Modifier.height(8.dp))
@@ -137,7 +147,7 @@ fun NotesScreenContent(
                         }
 
                         IconButton(
-                            onClick = { onDelete.invoke(notes.get(index).id) }
+                            onClick = { onDelete.invoke(notes[index].id) }
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Delete, contentDescription = null,

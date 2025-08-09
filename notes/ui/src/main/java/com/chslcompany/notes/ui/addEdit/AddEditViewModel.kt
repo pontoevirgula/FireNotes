@@ -6,11 +6,14 @@ import com.chslcompany.auth.domain.model.User
 import com.chslcompany.auth.domain.useCase.GetCurrentUserUseCase
 import com.chslcompany.notes.domain.model.Note
 import com.chslcompany.notes.domain.useCase.CreateNoteUseCase
+import com.chslcompany.notes.domain.useCase.GetNoteUseCase
+import com.chslcompany.notes.domain.useCase.GetUpdateNoteUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
@@ -21,8 +24,16 @@ import java.util.UUID
 @HiltViewModel
 class AddEditViewModel @Inject constructor(
     private val createNoteUseCase: CreateNoteUseCase,
-    private val getCurrentUserUseCase: GetCurrentUserUseCase
+    private val getCurrentUserUseCase: GetCurrentUserUseCase,
+    private val getUpdateNoteUseCase: GetUpdateNoteUseCase,
+    private val getNoteUseCase: GetNoteUseCase
+
 ): ViewModel() {
+
+    private val _editNote = MutableStateFlow<Note?>(null)
+
+    private val _isEdit = MutableStateFlow(false)
+    val isEdit = _isEdit.asStateFlow()
 
     private val _uiState = MutableStateFlow(AddEditUiState())
     val uiState = _uiState.asStateFlow()
@@ -87,6 +98,51 @@ class AddEditViewModel @Inject constructor(
 
             }.launchIn(viewModelScope)
     }
+
+    fun getNote(id: String) {
+        _isEdit.update { true }
+        getNoteUseCase(id)
+            .onStart{
+                _uiState.update { AddEditUiState(isLoading = true) }
+            }
+            .onEach { result ->
+                result.onSuccess {data ->
+                    _uiState.update { AddEditUiState(isLoading = false) }
+                    _editNote.update { data }
+                    _title.update { data.title }
+                    _content.update { data.content }
+                    _imageUrl.update { data.imageUrl }
+                    _shared.update { data.shared }
+                }.onFailure { error ->
+
+                }
+            }.onCompletion {
+                _uiState.update { AddEditUiState() }
+            }.launchIn(viewModelScope)
+    }
+
+    fun updateNote() {
+        val note = Note(
+            id = _editNote.value?.id.orEmpty(),
+            email = _user.value?.email.orEmpty() ,
+            title = _title.value,
+            content = _content.value,
+            imageUrl = _editNote.value?.imageUrl.orEmpty(),
+            shared = _shared.value,
+        )
+        getUpdateNoteUseCase(_imageUrl.value, note)
+            .onStart{
+                _uiState.update { AddEditUiState(isLoading = true) }
+            }
+            .onEach { result ->
+                result.onSuccess { data ->
+                    _uiState.update { it.copy(isPopBackStack = true) }
+                }.onFailure { error -> }
+            }.onCompletion {
+                _uiState.update { AddEditUiState() }
+            }.launchIn(viewModelScope)
+    }
+
 
 
 

@@ -13,6 +13,6 @@ interface NotesRepository {
 
     fun getNotes(email : String) : Flow<List<Note>>
 
-    suspend fun getNote(id : String) : Result<Note>
+    fun getNote(id : String) : Flow<Result<Note>>
 
 }

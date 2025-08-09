@@ -21,6 +21,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -41,7 +42,11 @@ import coil.compose.AsyncImage
 import androidx.compose.runtime.getValue
 
 @Composable
-fun AddEditScreen(modifier: Modifier = Modifier, popBackStack: () -> Unit) {
+fun AddEditScreen(
+    modifier: Modifier = Modifier,
+    id: String?,
+    popBackStack: () -> Unit
+) {
     val viewModel = hiltViewModel<AddEditViewModel>()
 
     val title by viewModel.title.collectAsStateWithLifecycle()
@@ -49,10 +54,18 @@ fun AddEditScreen(modifier: Modifier = Modifier, popBackStack: () -> Unit) {
     val imageUrl by viewModel.imageUrl.collectAsStateWithLifecycle()
     val shared by viewModel.shared.collectAsStateWithLifecycle()
 
+    val isEdit by viewModel.isEdit.collectAsStateWithLifecycle()
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    LaunchedEffect(id) {
+        if (id != null){
+            viewModel.getNote(id)
+        }
+    }
+
     LaunchedEffect(uiState) {
-        if (uiState.isPopBackStack){
+        if (uiState.isPopBackStack) {
             popBackStack()
         }
     }
@@ -60,14 +73,15 @@ fun AddEditScreen(modifier: Modifier = Modifier, popBackStack: () -> Unit) {
     val photoPicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri ->
-            if (uri != null) {
-                viewModel.onImageUrlChange(uri.toString())
-            }
+            if (uri == null) return@rememberLauncherForActivityResult
+            viewModel.onImageUrlChange(uri.toString())
+
         }
     )
 
     AddEditScreenContent(
         modifier = modifier.fillMaxSize(),
+        isEdit = isEdit,
         title = title,
         content = content,
         shared = shared,
@@ -76,41 +90,51 @@ fun AddEditScreen(modifier: Modifier = Modifier, popBackStack: () -> Unit) {
         onContentChange = viewModel::onContentChange,
         onSharedChange = viewModel::onSharedChange,
         addImage = { photoPicker.launch(PickVisualMediaRequest()) },
-        createNote = viewModel::createNote
-
+        createNote = viewModel::createNote,
+        updateNote = viewModel::updateNote,
+        removeImage = {
+            viewModel.onImageUrlChange("")
+        }
     )
 
 }
-
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditScreenContent(
     modifier: Modifier = Modifier,
-    title : String,
-    content : String,
-    shared : Boolean,
-    imageUrl : String,
-    onTitleChange : (String) -> Unit,
-    onContentChange : (String) -> Unit,
-    onSharedChange : (Boolean) -> Unit,
-    addImage : () -> Unit,
-    createNote: () -> Unit
+    isEdit: Boolean = false,
+    title: String,
+    content: String,
+    shared: Boolean,
+    imageUrl: String,
+    onTitleChange: (String) -> Unit,
+    onContentChange: (String) -> Unit,
+    onSharedChange: (Boolean) -> Unit,
+    addImage: () -> Unit,
+    createNote: () -> Unit,
+    updateNote: () -> Unit,
+    removeImage: () -> Unit
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
             TopAppBar(title = { Text("Adicionar/Editar") })
-        }, 
+        },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = createNote,
+                onClick ={
+                    if(isEdit)
+                        updateNote()
+                    else
+                        createNote()
+                },
                 modifier = Modifier
                     .navigationBarsPadding()
                     .imePadding()
-            ){
-               Icon(imageVector = Icons.Default.Check, contentDescription = "Salvar nota")
+            ) {
+                Icon(imageVector = Icons.Default.Check, contentDescription = "Salvar anotação")
             }
         }
     ) { innerPadding ->
@@ -127,7 +151,7 @@ fun AddEditScreenContent(
             Text("Título")
             Spacer(modifier = Modifier.height(height = 8.dp))
             TextField(
-                value = title, 
+                value = title,
                 onValueChange = onTitleChange,
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text("Digite o título de sua tarefa") },
@@ -139,7 +163,7 @@ fun AddEditScreenContent(
             Text("Conteúdo")
             Spacer(modifier = Modifier.height(height = 8.dp))
             TextField(
-                value = content, 
+                value = content,
                 onValueChange = onContentChange,
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text("Digite o conteúdo de sua tarefa") },
@@ -160,11 +184,11 @@ fun AddEditScreenContent(
 
             Spacer(modifier = Modifier.height(height = 12.dp))
 
-            if(imageUrl.isEmpty()) {
+            if (imageUrl.isEmpty()) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable{
+                        .clickable {
                             addImage()
                         }
                         .height(200.dp),
@@ -175,13 +199,22 @@ fun AddEditScreenContent(
                         modifier = Modifier.size(80.dp)
                     )
                 }
-            } else{
+            } else {
                 AsyncImage(
                     model = imageUrl,
                     contentDescription = null,
                     modifier = Modifier.fillMaxWidth(),
                     contentScale = ContentScale.Inside
                 )
+                Spacer(modifier = Modifier.height(height = 12.dp))
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(45.dp),
+                    onClick = (removeImage)
+                ){
+                    Text("Excluir imagem")
+                }
             }
         }
     }
