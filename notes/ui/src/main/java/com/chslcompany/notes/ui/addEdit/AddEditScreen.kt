@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -40,6 +41,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.draw.alpha
 
 @Composable
 fun AddEditScreen(
@@ -86,6 +88,7 @@ fun AddEditScreen(
         content = content,
         shared = shared,
         imageUrl = imageUrl,
+        isImageLoading = uiState.isImageLoading,
         onTitleChange = viewModel::onTitleChange,
         onContentChange = viewModel::onContentChange,
         onSharedChange = viewModel::onSharedChange,
@@ -109,6 +112,7 @@ fun AddEditScreenContent(
     content: String,
     shared: Boolean,
     imageUrl: String,
+    isImageLoading: Boolean,
     onTitleChange: (String) -> Unit,
     onContentChange: (String) -> Unit,
     onSharedChange: (Boolean) -> Unit,
@@ -124,15 +128,24 @@ fun AddEditScreenContent(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick ={
-                    if(isEdit)
-                        updateNote()
-                    else
-                        createNote()
+                onClick = {
+                    if (!isImageLoading) {
+                        if(isEdit)
+                            updateNote()
+                        else
+                            createNote()
+                    }
                 },
                 modifier = Modifier
                     .navigationBarsPadding()
                     .imePadding()
+                    .then(
+                        if (isImageLoading) {
+                            Modifier.alpha(0.6f)
+                        } else {
+                            Modifier
+                        }
+                    )
             ) {
                 Icon(imageVector = Icons.Default.Check, contentDescription = "Salvar anotação")
             }
@@ -200,18 +213,35 @@ fun AddEditScreenContent(
                     )
                 }
             } else {
-                AsyncImage(
-                    model = imageUrl,
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxWidth(),
-                    contentScale = ContentScale.Inside
-                )
+                Box(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    AsyncImage(
+                        model = imageUrl,
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxWidth(),
+                        contentScale = ContentScale.Inside
+                    )
+                    
+                    if (isImageLoading) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+                }
+                
                 Spacer(modifier = Modifier.height(height = 12.dp))
                 Button(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(45.dp),
-                    onClick = (removeImage)
+                    onClick = (removeImage),
+                    enabled = !isImageLoading
                 ){
                     Text("Excluir imagem")
                 }

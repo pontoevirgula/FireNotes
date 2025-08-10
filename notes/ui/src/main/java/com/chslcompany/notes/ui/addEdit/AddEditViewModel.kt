@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 import java.util.UUID
 
 
@@ -85,15 +86,30 @@ class AddEditViewModel @Inject constructor(
             shared = shared.value,
         )
         
+        // Se há imageUrl, mostrar loading de imagem imediatamente
+        if (_imageUrl.value.isNotEmpty()) {
+            _uiState.update { it.copy(isImageLoading = true) }
+        }
+        
         createNoteUseCase(_imageUrl.value, note)
             .onStart{ 
-                _uiState.update { AddEditUiState(isLoading = true) }
+                _uiState.update { AddEditUiState(isImageLoading = _imageUrl.value.isNotEmpty()) }
             }
             .onEach { result ->
                 result.onSuccess {
-                    _uiState.update { AddEditUiState(isLoading = false, isPopBackStack = true) }
+
+                    // Se há imageUrl, continuar o loading por 1 segundo
+                    if (_imageUrl.value.isNotEmpty()) {
+                        viewModelScope.launch {
+                            delay(1000) // Delay de 1 segundo
+                            _uiState.update { it.copy(isImageLoading = false, isPopBackStack = true) }
+                        }
+                    } else {
+                        // Se não há imageUrl, navegar imediatamente
+                        _uiState.update { it.copy(isPopBackStack = true) }
+                    }
                 }.onFailure { error ->
-                    _uiState.update { AddEditUiState(isLoading = false) }
+                    _uiState.update { AddEditUiState(isImageLoading = false) }
                 }
 
             }.launchIn(viewModelScope)
@@ -102,12 +118,8 @@ class AddEditViewModel @Inject constructor(
     fun getNote(id: String) {
         _isEdit.update { true }
         getNoteUseCase(id)
-            .onStart{
-                _uiState.update { AddEditUiState(isLoading = true) }
-            }
             .onEach { result ->
                 result.onSuccess {data ->
-                    _uiState.update { AddEditUiState(isLoading = false) }
                     _editNote.update { data }
                     _title.update { data.title }
                     _content.update { data.content }
@@ -130,20 +142,35 @@ class AddEditViewModel @Inject constructor(
             imageUrl = _editNote.value?.imageUrl.orEmpty(),
             shared = _shared.value,
         )
+        
+        // Se há imageUrl, mostrar loading de imagem imediatamente
+        if (_imageUrl.value.isNotEmpty()) {
+            _uiState.update { it.copy(isImageLoading = true) }
+        }
+        
         getUpdateNoteUseCase(_imageUrl.value, note)
             .onStart{
-                _uiState.update { AddEditUiState(isLoading = true) }
+                _uiState.update { AddEditUiState(isImageLoading = _imageUrl.value.isNotEmpty()) }
             }
             .onEach { result ->
                 result.onSuccess { data ->
-                    _uiState.update { it.copy(isPopBackStack = true) }
-                }.onFailure { error -> }
+                    // Se há imageUrl, continuar o loading por 1 segundo
+                    if (_imageUrl.value.isNotEmpty()) {
+                        viewModelScope.launch {
+                            delay(1000) // Delay de 1 segundo
+                            _uiState.update { it.copy(isImageLoading = false, isPopBackStack = true) }
+                        }
+                    } else {
+                        // Se não há imageUrl, navegar imediatamente
+                        _uiState.update { it.copy(isPopBackStack = true) }
+                    }
+                }.onFailure { error -> 
+                    _uiState.update { it.copy(isImageLoading = false) }
+                }
             }.onCompletion {
                 _uiState.update { AddEditUiState() }
             }.launchIn(viewModelScope)
     }
-
-
 
 
 }
