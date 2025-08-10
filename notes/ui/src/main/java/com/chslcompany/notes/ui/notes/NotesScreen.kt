@@ -147,14 +147,14 @@ fun NotesScreenContent(
                             .padding(horizontal = 12.dp, vertical = 8.dp)
                             .fillMaxWidth()
                             .background(
-                                color = if(notes.get(index).shared) Color.Green else Color.LightGray,
+                                color = if(notes[index].shared) Color.Green else Color.LightGray,
                                 shape = RoundedCornerShape(12.dp)
                             )
                             .padding(12.dp)
                             .clip(RoundedCornerShape(12.dp))
                     ) {
                         AsyncImage(
-                            model = notes.get(index).imageUrl, contentDescription = null,
+                            model = notes[index].imageUrl, contentDescription = null,
                             modifier = Modifier
                                 .size(60.dp)
                                 .background(color = Color.White, shape = CircleShape)
@@ -162,9 +162,9 @@ fun NotesScreenContent(
                        )
                        Spacer(Modifier.width(8.dp))
                         Column(modifier = Modifier.weight(1f)){
-                            Text(notes.get(index).title, style = MaterialTheme.typography.titleLarge)
+                            Text(notes[index].title, style = MaterialTheme.typography.titleLarge)
                             Spacer(Modifier.height(8.dp))
-                            Text(notes.get(index).content, style = MaterialTheme.typography.bodyMedium)
+                            Text(notes[index].content, style = MaterialTheme.typography.bodyMedium)
                         }
 
                         IconButton(
