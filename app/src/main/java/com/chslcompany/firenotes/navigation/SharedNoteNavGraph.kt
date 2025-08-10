@@ -25,7 +25,12 @@ object SharedNoteNavGraph: BaseNavGraph {
     ) {
         navGraphBuilder.navigation<Dest.Root>(startDestination = Dest.SharedNote){
             composable<Dest.SharedNote>{
-                SharedNoteScreen(modifier)
+                SharedNoteScreen(
+                    modifier = modifier,
+                    navigateToNotesScreen = {
+                        navHostController.navigateUp()
+                    }
+                )
             }
 
         }

@@ -44,14 +44,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
 fun SharedNoteScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navigateToNotesScreen: () -> Unit
 ) {
     val viewModel = hiltViewModel<SharedNoteViewModel>()
     val sharedNotes by viewModel.sharedNotes.collectAsStateWithLifecycle(emptyList())
     SharedNoteScreenContent(
         modifier = modifier.fillMaxSize(),
         list = sharedNotes,
-        loadNextPage = viewModel::getPaginatedNotes
+        loadNextPage = viewModel::getPaginatedNotes,
+        navigateToNotesScreen = navigateToNotesScreen
     )
 
 }
@@ -62,6 +64,7 @@ fun SharedNoteScreenContent(
     modifier: Modifier = Modifier,
     list: List<SharedNote>,
     loadNextPage: () -> Unit,
+    navigateToNotesScreen: () -> Unit
 ) {
     val lazyListState = rememberLazyListState()
     Scaffold(
@@ -73,7 +76,7 @@ fun SharedNoteScreenContent(
                     Icon(
                         imageVector = Icons.Default.ArrowBack, contentDescription = null,
                         modifier = Modifier.clickable {
-
+                            navigateToNotesScreen()
                         })
                 }
             )
