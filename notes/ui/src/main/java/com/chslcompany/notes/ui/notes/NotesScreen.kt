@@ -18,13 +18,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,7 +43,8 @@ import androidx.compose.ui.Alignment
 @Composable
 fun NotesScreen(
     modifier: Modifier = Modifier,
-    goToAddEditNoteScreen : (String?) -> Unit
+    goToAddEditNoteScreen : (String?) -> Unit,
+    navigateToSharedNotes: () -> Unit
 ) {
 
     val viewModel = hiltViewModel<NotesViewModel>()
@@ -52,19 +56,36 @@ fun NotesScreen(
         notes = notes,
         onDelete = viewModel::deleteNote,
         goToAddEditNoteScreen = goToAddEditNoteScreen,
+        navigateToSharedNotes = navigateToSharedNotes
     )
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotesScreenContent(
     modifier: Modifier = Modifier, 
     notes: List<Note>, 
     onDelete: (String) -> Unit,
-    goToAddEditNoteScreen: (String?) -> Unit
+    goToAddEditNoteScreen: (String?) -> Unit,
+    navigateToSharedNotes: () -> Unit
 ){
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                title = {Text("Anotações")},
+                actions = {
+                    IconButton(onClick = { navigateToSharedNotes() })
+                    {
+                        Icon(
+                            imageVector = Icons.Default.Share, contentDescription = null,
+                            tint = Color.Blue
+                        )
+                    }
+                }
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {

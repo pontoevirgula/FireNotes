@@ -16,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import com.chslcompany.firenotes.navigation.AuthNavGraph
 import com.chslcompany.firenotes.navigation.BaseNavGraph
 import com.chslcompany.firenotes.navigation.NotesNavGraph
+import com.chslcompany.firenotes.navigation.SharedNoteNavGraph
 import com.chslcompany.firenotes.ui.theme.FireNotesTheme
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,13 +41,14 @@ class MainActivity : ComponentActivity() {
                             if (firebaseAuth.currentUser == null) AuthNavGraph.Dest.Root
                             else NotesNavGraph.Dest.Root
                     ) {
-                        listOf<BaseNavGraph>(AuthNavGraph, NotesNavGraph).forEach {
-                            it.build(
-                                modifier = Modifier.padding(innerPadding),
-                                navHostController = navController,
-                                navGraphBuilder = this
-                            )
-                        }
+                        listOf<BaseNavGraph>(AuthNavGraph, NotesNavGraph, SharedNoteNavGraph)
+                            .forEach {
+                                it.build(
+                                    modifier = Modifier.padding(innerPadding),
+                                    navHostController = navController,
+                                    navGraphBuilder = this
+                                )
+                            }
                     }
                 }
             }

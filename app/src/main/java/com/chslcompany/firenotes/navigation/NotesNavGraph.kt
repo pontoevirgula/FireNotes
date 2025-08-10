@@ -10,7 +10,7 @@ import com.chslcompany.notes.ui.addEdit.AddEditScreen
 import com.chslcompany.notes.ui.notes.NotesScreen
 import kotlinx.serialization.Serializable
 
-object NotesNavGraph  : BaseNavGraph {
+object NotesNavGraph : BaseNavGraph {
 
     sealed interface Dest {
         @Serializable
@@ -30,9 +30,15 @@ object NotesNavGraph  : BaseNavGraph {
     ) {
         navGraphBuilder.navigation<Dest.Root>(startDestination = Dest.Notes) {
             composable<Dest.Notes> {
-                NotesScreen(modifier = modifier, goToAddEditNoteScreen = {
-                    navHostController.navigate(Dest.AddEdit(it))
-                })
+                NotesScreen(
+                    modifier = modifier,
+                    goToAddEditNoteScreen = {
+                        navHostController.navigate(Dest.AddEdit(it))
+                    },
+                    navigateToSharedNotes = {
+                        navHostController.navigate(SharedNoteNavGraph.Dest.Root)
+                    }
+                )
             }
 
             composable<Dest.AddEdit> {

@@ -8,4 +8,6 @@ data class Note(
     val imageUrl : String = "",
     val shared : Boolean = false,
     val timeStamp : String = System.currentTimeMillis().toString()
-)
+){
+    constructor():this("","","","","",false)
+}
